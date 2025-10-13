@@ -2,6 +2,7 @@ package dev.luiz.user.system.models;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,9 +30,14 @@ public class User implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(unique = true, nullable = false, length = 14)
 	private String cpf;
+	
 	private String nome;
+	
+	@Column(unique = true, nullable = false)
 	private String email;
+	
 	private String senha;
 	
 	@OneToOne(fetch = FetchType.EAGER)

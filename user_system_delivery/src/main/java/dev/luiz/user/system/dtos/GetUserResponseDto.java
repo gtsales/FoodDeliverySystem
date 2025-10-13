@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class UserDto {
+public class GetUserResponseDto {
 
-	private String cpf;
-	private String nome;
-	private String email;
-	private String senha;
-	private EnderecoDto enderecoDto;
+	UserDto data;
 }
