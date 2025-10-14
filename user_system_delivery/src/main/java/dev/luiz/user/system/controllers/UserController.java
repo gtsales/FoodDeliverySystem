@@ -14,13 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.luiz.user.system.apis.UserApi;
 import dev.luiz.user.system.dtos.GetUserResponseDto;
 import dev.luiz.user.system.dtos.RegisterUserRequestDto;
+import dev.luiz.user.system.interfaces.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/user")
-@Slf4j
+@RequiredArgsConstructor
 public class UserController implements UserApi{
 
+	private final UserService userService;
+	
 	@Override
 	@GetMapping("/cpf")
 	public ResponseEntity<GetUserResponseDto> getUser(@RequestParam String cpf) {
@@ -34,7 +39,7 @@ public class UserController implements UserApi{
 		
 		log.trace("Starting register user. REQUEST_BODY [{}]", registerUserRequestDto);
 		
-		//TODO SERVICE TO REGISTER
+		userService.registerUser(registerUserRequestDto);
 		
 		log.trace("Finishing register user.");
 		

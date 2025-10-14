@@ -2,6 +2,8 @@ package dev.luiz.user.system.models;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Entity
 @Data
 @Table(name = "tb_endereco")
 public class Endereco implements Serializable{
@@ -25,9 +28,18 @@ public class Endereco implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(nullable = false)
 	private String rua;
+	
+	@Column(nullable = false)
 	private String numero;
+	
+	@Column(nullable = false)
 	private String cidade;
+	
+	@Column(nullable = false, length = 2)
 	private String estado;
+	
+	@Column(nullable = false)
 	private String cep;
 }
