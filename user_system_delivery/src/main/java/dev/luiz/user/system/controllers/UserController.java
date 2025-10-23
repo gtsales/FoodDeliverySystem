@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,12 +38,25 @@ public class UserController implements UserApi{
 	@PostMapping("/register")
 	public ResponseEntity<Void> registerUser(@Valid @RequestBody RegisterUserRequestDto registerUserRequestDto) {
 		
-		log.trace("Starting register user. REQUEST_BODY [{}]", registerUserRequestDto);
+		log.trace("Starting register user.");
 		
 		userService.registerUser(registerUserRequestDto);
 		
 		log.trace("Finishing register user.");
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
+	}
+
+	@Override
+	@DeleteMapping("/delete")
+	public ResponseEntity<Void> deleteUser(@RequestParam String cpf) {
+		
+		log.trace("Starting delete user.");
+		
+		userService.deleteUser(cpf);
+		
+		log.trace("Finishing delete user.");
+		
+		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 }

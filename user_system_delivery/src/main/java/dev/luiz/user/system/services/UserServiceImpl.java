@@ -1,7 +1,10 @@
 package dev.luiz.user.system.services;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dev.luiz.user.system.dtos.RegisterUserRequestDto;
 import dev.luiz.user.system.interfaces.UserService;
@@ -21,7 +24,7 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public void registerUser(RegisterUserRequestDto registerUserRequestDto) {
 		
-		log.error("Starting register user.");
+		log.debug("Starting register user.");
 		
 		User user = convertDtoToModel(registerUserRequestDto);
 		
@@ -33,12 +36,12 @@ public class UserServiceImpl implements UserService{
 			log.error("Error trying to register User. ERRO [{}]", e.getMessage());
 		}
 		
-		log.error("Finishing register user.");
+		log.debug("Finishing register user.");
 	}
 	
 	private User convertDtoToModel(RegisterUserRequestDto registerUserRequestDto) {
 		
-		log.error("Starting convert User dto to model.");
+		log.debug("Starting convert User dto to model.");
 		
 		return User.builder()
 				.cpf(registerUserRequestDto.getData().getCpf())
@@ -52,5 +55,21 @@ public class UserServiceImpl implements UserService{
 						.estado(registerUserRequestDto.getData().getEnderecoDto().getEstado())
 						.cep(registerUserRequestDto.getData().getEnderecoDto().getCep())
 						.build()).build();
+	}
+
+	@Override
+	@Transactional
+	public void deleteUser(String cpf) {
+
+		log.debug("Starting delete user.");
+
+		int result = userRepository.deleteByCpf(cpf);
+
+		if (result == 0) {
+
+			throw new EntityNotFoundException("User not found with CPF: " + cpf);
+		}
+
+		log.debug("Finishing delete user.");
 	}
 }

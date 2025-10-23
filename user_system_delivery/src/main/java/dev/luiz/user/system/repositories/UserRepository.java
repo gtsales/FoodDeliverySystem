@@ -11,4 +11,5 @@ import dev.luiz.user.system.models.User;
 public interface UserRepository extends JpaRepository<User, Long>{
 
 	Optional<User> findByCpf(String cpf);
+	int deleteByCpf(String cpf);
 }

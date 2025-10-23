@@ -9,4 +9,5 @@ public interface UserApi {
 
 	ResponseEntity<GetUserResponseDto> getUser(String cpf);
 	ResponseEntity<Void> registerUser(RegisterUserRequestDto registerUserRequestDto);
+	ResponseEntity<Void> deleteUser(String cpf);
 }
