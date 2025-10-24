@@ -28,10 +28,12 @@ public class UserController implements UserApi{
 	private final UserService userService;
 	
 	@Override
-	@GetMapping("/cpf")
+	@GetMapping("/find")
 	public ResponseEntity<GetUserResponseDto> getUser(@RequestParam String cpf) {
 		
-		return null;
+		log.trace("Starting get user.");
+		
+		return ResponseEntity.status(HttpStatus.OK).body(userService.findUserByCpf(cpf));
 	}
 
 	@Override
@@ -53,7 +55,7 @@ public class UserController implements UserApi{
 		
 		log.trace("Starting delete user.");
 		
-		userService.deleteUser(cpf);
+		userService.deleteUserByCpf(cpf);
 		
 		log.trace("Finishing delete user.");
 		

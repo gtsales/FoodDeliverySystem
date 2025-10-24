@@ -6,7 +6,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import dev.luiz.user.system.dtos.EnderecoDto;
+import dev.luiz.user.system.dtos.GetUserResponseDto;
 import dev.luiz.user.system.dtos.RegisterUserRequestDto;
+import dev.luiz.user.system.dtos.UserDto;
 import dev.luiz.user.system.interfaces.UserService;
 import dev.luiz.user.system.models.Endereco;
 import dev.luiz.user.system.models.User;
@@ -39,6 +42,35 @@ public class UserServiceImpl implements UserService{
 		log.debug("Finishing register user.");
 	}
 	
+	@Override
+	@Transactional
+	public void deleteUserByCpf(String cpf) {
+
+		log.debug("Starting delete user.");
+
+		int result = userRepository.deleteByCpf(cpf);
+
+		if (result == 0) {
+
+			throw new EntityNotFoundException("User not found with CPF: " + cpf);
+		}
+
+		log.debug("Finishing delete user.");
+	}
+
+	@Override
+	public GetUserResponseDto findUserByCpf(String cpf) {
+		
+		log.debug("Starting find user by cpf.");
+
+		User user = userRepository.findByCpf(cpf)
+				.orElseThrow(() -> new EntityNotFoundException(String.format("User not found with CPF: %s", cpf)));
+		
+		log.debug("Finishing find user by cpf.");
+		
+		return convertModelToDto(user);
+	}
+	
 	private User convertDtoToModel(RegisterUserRequestDto registerUserRequestDto) {
 		
 		log.debug("Starting convert User dto to model.");
@@ -56,20 +88,22 @@ public class UserServiceImpl implements UserService{
 						.cep(registerUserRequestDto.getData().getEnderecoDto().getCep())
 						.build()).build();
 	}
-
-	@Override
-	@Transactional
-	public void deleteUser(String cpf) {
-
-		log.debug("Starting delete user.");
-
-		int result = userRepository.deleteByCpf(cpf);
-
-		if (result == 0) {
-
-			throw new EntityNotFoundException("User not found with CPF: " + cpf);
-		}
-
-		log.debug("Finishing delete user.");
+	
+	private GetUserResponseDto convertModelToDto(User user) {
+		
+		log.debug("Starting convert User dto to model.");
+		
+		return GetUserResponseDto.builder()
+				.data(UserDto.builder()
+						.cpf(user.getCpf())
+						.nome(user.getNome())
+						.email(user.getEmail())
+						.enderecoDto(EnderecoDto.builder()
+								.rua(user.getEndereco().getRua())
+								.numero(user.getEndereco().getNumero())
+								.cidade(user.getEndereco().getCidade())
+								.estado(user.getEndereco().getEstado())
+								.cep(user.getEndereco().getCep())
+								.build()).build()).build();
 	}
 }
