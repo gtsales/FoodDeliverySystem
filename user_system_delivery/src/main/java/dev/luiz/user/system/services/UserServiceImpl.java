@@ -2,10 +2,13 @@ package dev.luiz.user.system.services;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import dev.luiz.user.system.constants.RedisConstants;
 import dev.luiz.user.system.dtos.EnderecoDto;
 import dev.luiz.user.system.dtos.GetUserResponseDto;
 import dev.luiz.user.system.dtos.RegisterUserRequestDto;
@@ -19,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@EnableCaching
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
 
@@ -59,6 +63,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
+	@Cacheable(value = RedisConstants.USER_CACHE_NAME, key = "#cpf")
 	public GetUserResponseDto findUserByCpf(String cpf) {
 		
 		log.debug("Starting find user by cpf.");
