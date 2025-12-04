@@ -1,4 +1,4 @@
-package dev.luiz.user.system;
+package dev.luiz.oauth.system;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
