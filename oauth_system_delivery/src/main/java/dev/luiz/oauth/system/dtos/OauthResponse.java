@@ -15,23 +15,18 @@ public class OauthResponse implements UserDetails{
 	private static final long serialVersionUID = 1L;
 
 	@Getter
-	private String username;
+    private String cpf;
+
+    @Getter
+    private String password;
+
+    @Getter
+    private UserType userType;
+
+    private boolean enabled;
 	
-	@Getter
-	private String email;
-	
-	@Getter
-	private String password;
-	
-	@Getter
-	private UserType userType;
-	
-	private boolean enabled;
-	
-	public OauthResponse(String username, String email, String password, UserType userType) {
-		
-        this.username = username;
-        this.email = email;
+    public OauthResponse(String cpf, String password, UserType userType) {
+        this.cpf = cpf;
         this.password = password;
         this.userType = userType;
         this.enabled = true;
@@ -44,6 +39,11 @@ public class OauthResponse implements UserDetails{
 		        new SimpleGrantedAuthority(userType.name())
 		    );
 	}
+	
+	@Override
+    public String getUsername() {
+        return this.cpf;
+    }
 
     @Override
     public boolean isAccountNonExpired() {

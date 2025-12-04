@@ -20,6 +20,7 @@ import dev.luiz.user.system.interfaces.UserService;
 import dev.luiz.user.system.models.Endereco;
 import dev.luiz.user.system.models.User;
 import dev.luiz.user.system.repositories.UserRepository;
+import dev.luiz.user.system.utils.EncryptUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -97,7 +98,7 @@ public class UserServiceImpl implements UserService{
 				.cpf(registerUserRequestDto.getData().getCpf())
 				.nome(registerUserRequestDto.getData().getNome())
 				.email(registerUserRequestDto.getData().getEmail())
-				.senha(registerUserRequestDto.getData().getSenha())
+				.senha(EncryptUtils.encode(registerUserRequestDto.getData().getSenha()))
 				.endereco(Endereco.builder()
 						.rua(registerUserRequestDto.getData().getEnderecoDto().getRua())
 						.numero(registerUserRequestDto.getData().getEnderecoDto().getNumero())

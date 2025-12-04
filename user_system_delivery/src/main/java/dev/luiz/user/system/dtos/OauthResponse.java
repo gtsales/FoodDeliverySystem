@@ -16,16 +16,13 @@ public class OauthResponse {
 	private String cpf;
 	
 	@Getter
-	private String nome;
-	
-	@Getter
-	private String senha;
+	private String password;
 	
 	@Getter
 	private UserType userType;
 	
 	public static OauthResponse from(User user) {
 		
-		return new OauthResponse(user.getCpf(), user.getNome(), user.getSenha(), UserType.CLIENTE);
+		return new OauthResponse(user.getCpf(), user.getSenha(), UserType.CLIENTE);
 	}
 }

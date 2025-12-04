@@ -65,7 +65,7 @@ public class UserController implements UserApi{
 
 	@Override
 	@GetMapping("/oauth")
-	public ResponseEntity<OauthResponse> getOauthCredentials(String cpf) {
+	public ResponseEntity<OauthResponse> getOauthCredentials(@RequestParam String cpf) {
 		
 		log.trace("Starting get oauth credentials.");
 		
