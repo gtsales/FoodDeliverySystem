@@ -5,12 +5,15 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import dev.luiz.user.system.constants.RedisConstants;
 import dev.luiz.user.system.dtos.EnderecoDto;
 import dev.luiz.user.system.dtos.GetUserResponseDto;
+import dev.luiz.user.system.dtos.OauthResponse;
 import dev.luiz.user.system.dtos.RegisterUserRequestDto;
 import dev.luiz.user.system.dtos.UserDto;
 import dev.luiz.user.system.interfaces.UserService;
@@ -74,6 +77,16 @@ public class UserServiceImpl implements UserService{
 		log.debug("Finishing find user by cpf.");
 		
 		return convertModelToDto(user);
+	}
+	
+	@Override
+	public OauthResponse findCredentials(String cpf) {
+		
+		return userRepository.findByCpf(cpf).map(OauthResponse::from)
+				.orElseThrow(() -> { 
+					log.error("User not found for ID {}", cpf);
+			return new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found for ID " + cpf);
+			});
 	}
 	
 	private User convertDtoToModel(RegisterUserRequestDto registerUserRequestDto) {

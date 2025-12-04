@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.luiz.user.system.apis.UserApi;
 import dev.luiz.user.system.dtos.GetUserResponseDto;
+import dev.luiz.user.system.dtos.OauthResponse;
 import dev.luiz.user.system.dtos.RegisterUserRequestDto;
 import dev.luiz.user.system.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +61,14 @@ public class UserController implements UserApi{
 		log.trace("Finishing delete user.");
 		
 		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
+
+	@Override
+	@GetMapping("/oauth")
+	public ResponseEntity<OauthResponse> getOauthCredentials(String cpf) {
+		
+		log.trace("Starting get oauth credentials.");
+		
+		return ResponseEntity.status(HttpStatus.OK).body(userService.findCredentials(cpf));
 	}
 }
