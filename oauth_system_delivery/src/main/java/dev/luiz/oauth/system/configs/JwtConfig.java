@@ -21,28 +21,26 @@ import com.nimbusds.jose.proc.SecurityContext;
 @Configuration
 public class JwtConfig {
 
-	 @Bean
-	    KeyPair keyPair() throws NoSuchAlgorithmException {
-	        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-	        keyPairGenerator.initialize(2048);
-	        return keyPairGenerator.generateKeyPair();
-	    }
+	@Bean
+	KeyPair keyPair() throws NoSuchAlgorithmException {
+		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+		keyPairGenerator.initialize(2048);
+		return keyPairGenerator.generateKeyPair();
+	}
 
-	    @Bean
-	    JWKSource<SecurityContext> jwkSource(KeyPair keyPair) {
-	        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-	        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+	@Bean
+	JWKSource<SecurityContext> jwkSource(KeyPair keyPair) {
+		RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
 
-	        RSAKey rsaKey = new RSAKey.Builder(publicKey)
-	                .privateKey(privateKey)
-	                .keyID(UUID.randomUUID().toString())
-	                .build();
-	        
-	        return new ImmutableJWKSet<>(new JWKSet(rsaKey));
-	    }
+		RSAKey rsaKey = new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(UUID.randomUUID().toString())
+				.build();
 
-	    @Bean
-	    JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
-	        return new NimbusJwtEncoder(jwkSource);
-	    }
+		return new ImmutableJWKSet<>(new JWKSet(rsaKey));
+	}
+
+	@Bean
+	JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
+		return new NimbusJwtEncoder(jwkSource);
+	}
 }
