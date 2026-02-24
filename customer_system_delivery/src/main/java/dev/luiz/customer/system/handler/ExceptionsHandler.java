@@ -1,4 +1,4 @@
-package dev.luiz.customer.system;
+package dev.luiz.customer.system.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
