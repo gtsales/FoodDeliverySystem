@@ -8,21 +8,24 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import dev.luiz.customer.system.constants.RedisConstants;
+import dev.luiz.customer.system.dtos.CepVerificationDto;
+import dev.luiz.customer.system.dtos.CustomerDto;
 import dev.luiz.customer.system.dtos.EnderecoDto;
 import dev.luiz.customer.system.dtos.GetCustomerResponseDto;
 import dev.luiz.customer.system.dtos.OauthResponse;
 import dev.luiz.customer.system.dtos.RegisterCustomerRequestDto;
-import dev.luiz.customer.system.dtos.CustomerDto;
 import dev.luiz.customer.system.interfaces.CustomerService;
-import dev.luiz.customer.system.models.Endereco;
 import dev.luiz.customer.system.models.Customer;
+import dev.luiz.customer.system.models.Endereco;
 import dev.luiz.customer.system.repositories.CustomerRepository;
 import dev.luiz.customer.system.utils.EncryptUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -32,10 +35,14 @@ public class CustomerServiceImpl implements CustomerService{
 
 	private final CustomerRepository userRepository;
 	
+	private final WebClient webClientCep;
+	
 	@Override
 	public void registerUser(RegisterCustomerRequestDto registerUserRequestDto) {
 		
 		log.debug("Starting register user.");
+		
+		verifyCep(registerUserRequestDto.getData().getEnderecoDto().getCep());
 		
 		Customer user = convertDtoToModel(registerUserRequestDto);
 		
@@ -124,5 +131,30 @@ public class CustomerServiceImpl implements CustomerService{
 								.estado(user.getEndereco().getEstado())
 								.cep(user.getEndereco().getCep())
 								.build()).build()).build();
+	}
+	
+	private void verifyCep(String cep) {
+		
+		String path = String.format("%s/json/", cep);
+		
+		webClientCep.get()
+				.uri(path)
+				.retrieve()
+				.onStatus(HttpStatus::is4xxClientError, response -> {
+			        if (HttpStatus.NOT_FOUND.equals(response.statusCode())) {
+			        	
+			            log.error("CEP not found. STATUS_CODE {}", response.statusCode());
+			            return Mono.error(new RuntimeException("CEP not found!"));
+			        }
+			        
+			        return Mono.error(new RuntimeException("Error on request"));
+			    })
+				.onStatus(HttpStatus::is5xxServerError, response -> {
+					
+					log.error("There is a problem with the server. STATUS_CODE {}", response.statusCode());
+					return Mono.error(new RuntimeException("Service unavailable."));
+				})
+				.bodyToMono(CepVerificationDto.class)
+				.doOnError(error -> log.error("Error trying to verify CEP: {}", error.getMessage()));
 	}
 }
