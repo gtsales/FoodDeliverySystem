@@ -34,7 +34,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService{
 
-	private final CustomerRepository userRepository;
+	private final CustomerRepository customerRepository;
 	
 	private final WebClient webClientCep;
 	
@@ -49,7 +49,7 @@ public class CustomerServiceImpl implements CustomerService{
 		
 		try {
 			
-			userRepository.save(user);
+			customerRepository.save(user);
 		} catch (IllegalArgumentException | DataIntegrityViolationException e) {
 			
 			String message = e.getMessage();
@@ -67,7 +67,7 @@ public class CustomerServiceImpl implements CustomerService{
 
 		log.debug("Starting delete user.");
 
-		int result = userRepository.deleteByCpf(cpf);
+		int result = customerRepository.deleteByCpf(cpf);
 
 		if (result == 0) {
 
@@ -83,7 +83,7 @@ public class CustomerServiceImpl implements CustomerService{
 		
 		log.debug("Starting find user by cpf.");
 
-		Customer user = userRepository.findByCpf(cpf)
+		Customer user = customerRepository.findByCpf(cpf)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("User not found with CPF: %s", cpf)));
 		
 		log.debug("Finishing find user by cpf.");
@@ -94,7 +94,7 @@ public class CustomerServiceImpl implements CustomerService{
 	@Override
 	public OauthResponse findCredentials(String cpf) {
 		
-		return userRepository.findByCpf(cpf).map(OauthResponse::from)
+		return customerRepository.findByCpf(cpf).map(OauthResponse::from)
 				.orElseThrow(() -> { 
 					log.error("User not found for ID {}", cpf);
 			return new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found for ID " + cpf);
