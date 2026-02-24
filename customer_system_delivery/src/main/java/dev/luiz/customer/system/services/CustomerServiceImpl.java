@@ -18,6 +18,7 @@ import dev.luiz.customer.system.dtos.EnderecoDto;
 import dev.luiz.customer.system.dtos.GetCustomerResponseDto;
 import dev.luiz.customer.system.dtos.OauthResponse;
 import dev.luiz.customer.system.dtos.RegisterCustomerRequestDto;
+import dev.luiz.customer.system.exceptions.RegisterUserException;
 import dev.luiz.customer.system.interfaces.CustomerService;
 import dev.luiz.customer.system.models.Customer;
 import dev.luiz.customer.system.models.Endereco;
@@ -51,7 +52,10 @@ public class CustomerServiceImpl implements CustomerService{
 			userRepository.save(user);
 		} catch (IllegalArgumentException | DataIntegrityViolationException e) {
 			
-			log.error("Error trying to register User. ERRO [{}]", e.getMessage());
+			String message = e.getMessage();
+			
+			log.error("Error trying to register User. ERRO [{}]", message);
+			throw new RegisterUserException(message);
 		}
 		
 		log.debug("Finishing register user.");
